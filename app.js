@@ -4,46 +4,75 @@ const novaTimeline = [
   {
     start: 0,
     end: 3,
-    title: "Product Detection",
-    subtitle: "AI Vision Analysis",
+    subtitle: "Frame Analysis",
+    title: "Product Detected",
     description:
-      "Nova identifies the uploaded item and extracts its visual attributes for downstream content generation."
+      "White sneaker detected in the influencer video. Likely category: casual footwear.",
+    product: "Nike Air Force 1",
+    brand: "Nike",
+    links: [
+      { name: "Amazon", url: "#" },
+      { name: "Trendyol", url: "#" },
+      { name: "Nike Store", url: "#" }
+    ]
   },
   {
     start: 4,
     end: 7,
-    title: "Background Generation",
-    subtitle: "Scene Imagination",
+    subtitle: "Brand Detection",
+    title: "Handbag Identified",
     description:
-      "Nova imagines a premium lifestyle backdrop to elevate the product's visual presentation."
+      "Luxury leather handbag detected. Style resembles premium designer tote.",
+    product: "Leather Tote Bag",
+    brand: "Coach (estimated)",
+    links: [
+      { name: "Amazon", url: "#" },
+      { name: "Zara", url: "#" },
+      { name: "Coach", url: "#" }
+    ]
   },
   {
     start: 8,
     end: 11,
-    title: "Instagram Caption",
-    subtitle: "Social Content",
+    subtitle: "Object Recognition",
+    title: "Sunglasses Detected",
     description:
-      "A short, elegant caption is generated to fit the product's visual tone and audience."
+      "Black sunglasses spotted during the video. Classic influencer accessory.",
+    product: "Ray-Ban Wayfarer",
+    brand: "Ray-Ban",
+    links: [
+      { name: "Amazon", url: "#" },
+      { name: "Ray-Ban Store", url: "#" },
+      { name: "Hepsiburada", url: "#" }
+    ]
   },
   {
     start: 12,
     end: 15,
-    title: "Ad Copy",
-    subtitle: "Marketing Output",
+    subtitle: "Style Analysis",
+    title: "Denim Jacket Found",
     description:
-      "Conversion-focused promotional text is created for ad creatives, banners, and campaign use."
+      "Light blue denim jacket detected. Casual fashion item commonly featured in lifestyle videos.",
+    product: "Denim Jacket",
+    brand: "Levi’s (estimated)",
+    links: [
+      { name: "Amazon", url: "#" },
+      { name: "Levi’s Store", url: "#" },
+      { name: "Trendyol", url: "#" }
+    ]
   }
 ];
+
 
 function Header() {
   return (
     <header className="header">
-      <div className="logo">Nova Studio</div>
+      <div className="logo">Nova Influencer Finder</div>
 
       <nav className="nav">
         <a href="#demo">Demo</a>
-        <a href="#outputs">Outputs</a>
-        <a href="#about">About</a>
+        <a href="#products">Products</a>
+        <a href="#links">Links</a>
       </nav>
     </header>
   );
@@ -55,31 +84,32 @@ function HeroSection() {
       <div className="hero-text">
         <div className="badge">Amazon Nova Hackathon Project</div>
 
-        <h1>E-Commerce Content Factory</h1>
+        <h1>Discover Products From Influencer Videos</h1>
 
         <p>
-          Upload a raw product photo and let AI transform it into a polished
-          marketing experience with premium background ideas, social captions,
-          and ad-ready copy.
+          Upload an influencer video or provide a video link. The system analyzes
+          visible products, detects likely names and brands, and helps users
+          reach shopping links faster.
         </p>
 
         <div className="hero-buttons">
           <button className="primary-btn">See Demo</button>
-          <button className="secondary-btn">Explore Outputs</button>
+          <button className="secondary-btn">View Detected Products</button>
         </div>
       </div>
 
       <div className="hero-visual">
         <div className="hero-card">
           <img
-            src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80"
-            alt="Product preview"
+            src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80"
+            alt="Influencer fashion preview"
           />
           <div className="hero-card-content">
-            <span className="mini-tag">AI Generated Flow</span>
-            <h3>Luxury Product Presentation</h3>
+            <span className="mini-tag">Video Commerce Discovery</span>
+            <h3>Turn Video Moments Into Shopping Opportunities</h3>
             <p>
-              From raw packshot to premium storefront storytelling in seconds.
+              Detect featured items inside influencer content and connect users
+              to product links in seconds.
             </p>
           </div>
         </div>
@@ -88,8 +118,14 @@ function HeroSection() {
   );
 }
 
-function UploadSection() {
-  const [selectedFileName, setSelectedFileName] = useState("No file selected yet");
+function UploadSection({
+  videoUrl,
+  setVideoUrl,
+  setAnalysisResults,
+  isLoading,
+  setIsLoading
+}) {
+  const [selectedFileName, setSelectedFileName] = useState("No video selected yet");
 
   function handleFileChange(event) {
     const file = event.target.files[0];
@@ -99,50 +135,106 @@ function UploadSection() {
     }
   }
 
-  function handleDemoProduct() {
-    setSelectedFileName("demo-product-image.jpg");
+  function handleDemoVideo() {
+    setSelectedFileName("demo-influencer-video.mp4");
   }
+
+  async function handleAnalyzeVideo() {
+  if (!videoUrl.trim()) {
+    alert("Please paste a video URL first.");
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+
+    const response = await fetch("http://127.0.0.1:8000/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ url: videoUrl })
+    });
+
+    const data = await response.json();
+
+    if (data.status === "success" && Array.isArray(data.results)) {
+      setAnalysisResults(data.results);
+      console.log("Nova analysis results:", data.results);
+    } else {
+      alert("Analysis failed.");
+    }
+  } catch (error) {
+    console.error("Analyze error:", error);
+    alert("Could not connect to backend.");
+  } finally {
+    setIsLoading(false);
+  }
+}
 
   return (
     <section className="upload-section">
       <div className="section-heading">
         <span className="section-tag">Input</span>
-        <h2>Upload Product Image or Video</h2>
+        <h2>Upload Influencer Video or Paste a Link</h2>
         <p>
-          Start with a raw product photo or short product video. Nova will analyze
-          the asset and prepare creative outputs for marketing and storefront presentation.
+          Start with a short influencer video or public video link. Nova will
+          analyze frames, detect visible products, identify likely brands, and
+          prepare shopping-oriented results.
         </p>
       </div>
 
       <div className="upload-box">
         <div className="upload-icon">↑</div>
-        <h3>Drag & Drop your product asset</h3>
-        <p>Supports JPG, PNG, MP4 and short product showcase videos.</p>
+        <h3>Add your influencer video</h3>
+        <p>Supports MP4, short-form product videos, and public video URLs.</p>
 
         <div className="upload-actions">
           <label className="primary-btn file-label">
-            Choose File
+            Choose Video
             <input
               type="file"
-              accept="image/*,video/*"
+              accept="video/*"
               onChange={handleFileChange}
               className="hidden-file-input"
             />
           </label>
 
-          <button className="secondary-btn" onClick={handleDemoProduct}>
-            Use Demo Product
+          <button className="secondary-btn" onClick={handleDemoVideo}>
+            Use Demo Video
+          </button>
+        </div>
+
+        <div className="video-url-box">
+          <span className="selected-file-label">Video Link</span>
+          <input
+            type="text"
+            placeholder="Paste Instagram, YouTube or public video URL"
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            className="video-url-input"
+          />
+        </div>
+
+        <div className="analyze-action-row">
+          <button
+            className="analyze-btn"
+            onClick={handleAnalyzeVideo}
+            disabled={isLoading}
+          >
+            {isLoading ? "Analyzing..." : "Analyze with Nova"}
           </button>
         </div>
 
         <div className="selected-file-box">
-          <span className="selected-file-label">Selected Asset</span>
+          <span className="selected-file-label">Selected Video</span>
           <p>{selectedFileName}</p>
         </div>
       </div>
     </section>
   );
 }
+
 
 function ProcessingSection() {
   const videoRef = useRef(null);
@@ -199,8 +291,26 @@ function ProcessingSection() {
         <div className="output-panel">
           <div className="active-output-card">
             <span className="mini-tag">{activeStep.subtitle}</span>
+
             <h3>{activeStep.title}</h3>
+
             <p>{activeStep.description}</p>
+
+            <div className="product-detected">
+              <strong>Product:</strong> {activeStep.product}
+            </div>
+
+            <div className="product-brand">
+              <strong>Brand:</strong> {activeStep.brand}
+            </div>
+
+            <div className="shopping-links">
+              {activeStep.links.map((link, i) => (
+                <a key={i} href={link.url} className="shop-btn">
+                  {link.name}
+                </a>
+              ))}
+            </div>
           </div>
 
           <div className="timeline-list">
@@ -233,50 +343,50 @@ function ProcessingSection() {
 
 function OutputShowcaseSection() {
   return (
-    <section className="output-showcase-section" id="outputs">
+    <section className="output-showcase-section" id="products">
       <div className="section-heading">
-        <span className="section-tag">Generated Outputs</span>
-        <h2>Nova-Generated Marketing Assets</h2>
+        <span className="section-tag">Detected Products</span>
+        <h2>Products Found in the Video</h2>
         <p>
-          Once the product is analyzed, Nova creates polished content blocks
-          that can be used across storefronts, social channels, and ad campaigns.
+          Nova analyzes influencer video frames and extracts visible products,
+          likely brands, and shopping-ready item information.
         </p>
       </div>
 
       <div className="output-grid">
         <div className="output-card">
-          <span className="output-label">Background Concept</span>
-          <h3>Luxury Vanity Scene</h3>
+          <span className="output-label">Sneakers</span>
+          <h3>Nike Air Force 1</h3>
           <p>
-            A soft marble countertop, warm ambient lighting, and premium beauty
-            studio styling to elevate product perception.
+            White low-top sneaker detected in a casual styling segment. Likely
+            brand match: Nike.
           </p>
         </div>
 
         <div className="output-card">
-          <span className="output-label">Instagram Caption</span>
-          <h3>Elegant Social Copy</h3>
+          <span className="output-label">Handbag</span>
+          <h3>Leather Tote Bag</h3>
           <p>
-            Glow differently. A beauty essential designed to bring refinement
-            and confidence into your daily ritual.
+            Premium tote-style handbag identified in a fashion-focused sequence.
+            Likely designer-inspired styling.
           </p>
         </div>
 
         <div className="output-card">
-          <span className="output-label">Ad Copy</span>
-          <h3>Performance Messaging</h3>
+          <span className="output-label">Eyewear</span>
+          <h3>Ray-Ban Wayfarer</h3>
           <p>
-            Turn simple product shots into conversion-ready campaigns with
-            AI-generated visuals and persuasive brand language.
+            Black sunglasses detected as a recurring accessory in the influencer
+            look. Likely classic Wayfarer style.
           </p>
         </div>
 
         <div className="output-card">
-          <span className="output-label">Product Identity</span>
-          <h3>Premium Beauty Positioning</h3>
+          <span className="output-label">Outerwear</span>
+          <h3>Denim Jacket</h3>
           <p>
-            Positioned as a modern, elegant self-care product for visually driven
-            e-commerce and social-first marketing teams.
+            Light-wash denim jacket spotted in a lifestyle scene. Likely casual
+            fashion piece from a mainstream brand.
           </p>
         </div>
       </div>
@@ -284,39 +394,44 @@ function OutputShowcaseSection() {
   );
 }
 
-function BeforeAfterSection() {
+function ShoppingLinksSection() {
   return (
-    <section className="before-after-section">
+    <section className="shopping-links-section" id="links">
       <div className="section-heading">
-        <span className="section-tag">Transformation</span>
-        <h2>From Raw Product Shot to Premium Brand Asset</h2>
+        <span className="section-tag">Shopping Links</span>
+        <h2>Go From Discovery to Purchase</h2>
         <p>
-          Nova transforms a simple product input into a polished visual concept
-          with stronger storytelling, premium context, and campaign-ready positioning.
+          Once products are detected, users can explore direct shopping options
+          across different platforms and marketplaces.
         </p>
       </div>
 
-      <div className="before-after-grid">
-        <div className="compare-card">
-          <span className="compare-label">Before</span>
-          <div className="compare-image placeholder-light">
-            <div className="compare-inner-text">
-              <h3>Raw Product Image</h3>
-              <p>Basic packshot with no storytelling or campaign framing.</p>
-            </div>
+      <div className="shopping-links-grid">
+        <div className="shopping-product-card">
+          <div className="shopping-product-head">
+            <span className="output-label">Detected Item</span>
+            <h3>Nike Air Force 1</h3>
+            <p>Detected from a sneaker-focused scene in the influencer video.</p>
+          </div>
+
+          <div className="link-group">
+            <a href="#" className="market-link">Amazon</a>
+            <a href="#" className="market-link">Trendyol</a>
+            <a href="#" className="market-link">Nike Store</a>
           </div>
         </div>
 
-        <div className="compare-card">
-          <span className="compare-label highlight">After</span>
-          <div className="compare-image placeholder-dark">
-            <div className="compare-inner-text">
-              <h3>Nova-Enhanced Presentation</h3>
-              <p>
-                Styled visual identity, luxury setting, refined copy, and
-                stronger e-commerce appeal.
-              </p>
-            </div>
+        <div className="shopping-product-card">
+          <div className="shopping-product-head">
+            <span className="output-label">Detected Item</span>
+            <h3>Ray-Ban Wayfarer</h3>
+            <p>Detected as a recurring eyewear product in the video sequence.</p>
+          </div>
+
+          <div className="link-group">
+            <a href="#" className="market-link">Amazon</a>
+            <a href="#" className="market-link">Hepsiburada</a>
+            <a href="#" className="market-link">Ray-Ban Store</a>
           </div>
         </div>
       </div>
@@ -329,32 +444,32 @@ function MetricsSection() {
     <section className="metrics-section">
       <div className="section-heading">
         <span className="section-tag">Impact</span>
-        <h2>AI-Powered Content Acceleration</h2>
+        <h2>Faster Product Discovery From Video Content</h2>
         <p>
-          Nova dramatically reduces the time needed to create marketing-ready
-          assets for e-commerce teams and content creators.
+          The system helps users move from watching influencer content to
+          discovering and shopping featured products with less manual effort.
         </p>
       </div>
 
       <div className="metrics-grid">
         <div className="metric-card">
-          <h3>90%</h3>
-          <p>Faster campaign asset creation</p>
+          <h3>Seconds</h3>
+          <p>To detect visible products from key video moments</p>
         </div>
 
         <div className="metric-card">
-          <h3>3x</h3>
-          <p>More social content generated</p>
+          <h3>Less Search</h3>
+          <p>Users spend less time manually looking for featured items</p>
         </div>
 
         <div className="metric-card">
-          <h3>Minutes</h3>
-          <p>From raw product photo to campaign-ready assets</p>
+          <h3>Multi-Link</h3>
+          <p>Products can be matched with links across multiple stores</p>
         </div>
 
         <div className="metric-card">
-          <h3>AI Assisted</h3>
-          <p>Creative direction and marketing copy</p>
+          <h3>Video Commerce</h3>
+          <p>Transforms influencer content into shoppable discovery flows</p>
         </div>
       </div>
     </section>
@@ -386,15 +501,25 @@ function Footer() {
 }
 
 function App() {
+  const [analysisResults, setAnalysisResults] = useState([]);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <div className="page-shell">
       <div className="container">
         <Header />
         <HeroSection />
-        <UploadSection />
-        <ProcessingSection />
-        <OutputShowcaseSection />
-        <BeforeAfterSection />
+        <UploadSection
+          videoUrl={videoUrl}
+          setVideoUrl={setVideoUrl}
+          setAnalysisResults={setAnalysisResults}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        />
+        <ProcessingSection analysisResults={analysisResults} />
+        <OutputShowcaseSection analysisResults={analysisResults} />
+        <ShoppingLinksSection analysisResults={analysisResults} />
         <MetricsSection />
       </div>
 

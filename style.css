@@ -711,3 +711,148 @@ button {
   width: 0%;
   transition: width 0.15s linear;
 }
+
+.video-url-box {
+  margin-top: 18px;
+  text-align: left;
+}
+
+.video-url-input {
+  width: 100%;
+  margin-top: 8px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid #dbe1ea;
+  background: #ffffff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.video-url-input:focus {
+  border-color: #5b3df5;
+  box-shadow: 0 0 0 4px rgba(91, 61, 245, 0.08);
+}
+
+.product-detected {
+  margin-top: 14px;
+  font-size: 0.95rem;
+}
+
+.product-brand {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.shopping-links {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.shop-btn {
+  padding: 8px 14px;
+  background: #5b3df5;
+  color: white;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.shop-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(91, 61, 245, 0.25);
+}
+
+/* SHOPPING LINKS SECTION */
+.shopping-links-section {
+  padding: 8px 0 80px;
+}
+
+.shopping-links-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.shopping-product-card {
+  background: white;
+  border-radius: 26px;
+  padding: 24px;
+  box-shadow: 0 18px 40px rgba(17, 24, 39, 0.06);
+  border: 1px solid #eceff6;
+}
+
+.shopping-product-head h3 {
+  margin: 12px 0 10px;
+  font-size: 1.3rem;
+}
+
+.shopping-product-head p {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.7;
+}
+
+.link-group {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.market-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(91, 61, 245, 0.1);
+  color: #5b3df5;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.market-link:hover {
+  transform: translateY(-2px);
+  background: rgba(91, 61, 245, 0.16);
+}
+
+@media (max-width: 900px) {
+  .shopping-links-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.analyze-action-row {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.analyze-btn {
+  padding: 14px 22px;
+  border: none;
+  border-radius: 14px;
+  background: #111827;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.analyze-btn:hover {
+  transform: translateY(-2px);
+}
+
+.analyze-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
